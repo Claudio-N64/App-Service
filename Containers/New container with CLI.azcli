@@ -1,0 +1,19 @@
+# The Variables
+RGName=$(az group create --name ACIgroup --location westeurope).name
+Location=Westeurope
+RGname=ACIgroup
+
+# The command for the new container
+az container create -g $RGName --name cloddocontainer01 --image mcr.microsoft.com/azuredocs/aci-helloworld --dns-name-label cloddo-demo --ports 80
+
+# Query the FQDN
+az container show --resource-group $RGname --name cloddocontainer01 --query "{FQDN:ipAddress.fqdn,ProvisioningState:provisioningState}" --out table
+
+# Quando è necessario risolvere i problemi di un contenitore o dell'applicazione che esegue (o semplicemente vedere il suo output), si può visualizzare i logs.
+
+az container logs --resource-group $RGname --name cloddocontainer01
+# Output strams = logs d'usacita locale e d'errore
+az container attach --resource-group $RGname --name cloddocontainer01
+
+#End lesson remove resources
+az group delete --name $RGname

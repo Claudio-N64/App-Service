@@ -1,0 +1,14 @@
+az container create \
+--resource-group acideploy \
+--name aci-demo-secure \
+--image microsoft/azure-vote-front:cosmosdb \
+--ip-address Public \
+--location westeurope \
+--secure-environment-variables \
+COSMOS_DB_ENDPOINT=$COSMOS_DB_ENDPOINT \
+COSMOS_DB_MASTERKEY=$PrimaryKey
+
+az container show \
+--resource-group acideploy \
+--name aci-demo-secure \
+--query containers[0].environmentVariables

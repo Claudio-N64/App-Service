@@ -1,0 +1,53 @@
+# Assign values to variables
+MyResourceGroup=mygroup
+Mylocation=WestEurope
+AcrName=myprivatecontainerregistry2021
+
+# Create resouce group
+az group create --name $MyResourceGroup --location $Mylocation
+
+# Create Azure Container Registry
+az acr create --name $AcrName --resource-group $mygroup --sku Standard --admin-enabled true
+
+# Copy simple Web Site from GitHub
+git clone https://github.com/MicrosoftDocs/mslearn-deploy-run-container-app-service.git
+
+#change directory to web site local folder
+cd mslearn-deploy-run-container-app-service/node
+
+# Build the web Site  onto ACR
+az acr build --registry $AcrName --image webimage .
+# Modify the image and redeployed by webhook
+# change directory
+cd ~/mslearn-deploy-run-container-app-service/node/routes
+# Change the index.js file as you prefer and save it.
+
+# Update the page and the web Site
+az acr build --registry $AcrName --image webimage .
+###################################################
+############           PART TWO #######################
+
+# New web Site from GitHub
+git clone https://github.com/MicrosoftDocs/mslearn-hotel-reservation-system.git
+
+#Change directory  to: cd mslearn-hotel-reservation-system/src
+cd mslearn-hotel-reservation-system/src
+
+# Build the web Site
+dotnet build
+
+# Change directory to cd HotelReservationSystem
+cd HotelReservationSystem
+
+#Publish the website
+dotnet publish -o website
+# Zip the folder Website and call the file Website.zip Put the zip file onto Website folder !
+
+az webapp deployment source config-zip --src website.zip --name webappscaledemo01 --resource-group $MyResourceGroup
+
+# Open the folder called "HotelReservationSystemTestClient"
+cd ~/mslearn-hotel-reservation-system/src/HotelReservationSystemTestClient
+#And there modify the file wiht the following line: https://webappscaledemo01.azurewebsites.net
+# Rebuild the app with dotnet build
+dotnet build
+dotnet run

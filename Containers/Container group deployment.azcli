@@ -1,0 +1,11 @@
+# The resource group
+az group create --name myResourceGroup --location westeurope
+
+az container create --resource-group myResourceGroup --file D:\Downloads\Powershell\Projects\Powershell\Containers\deploy-aci.yaml
+
+# View the deployment state
+az container show --resource-group myResourceGroup --name myContainerGroup --output table
+
+# View the container logs
+az container logs --resource-group myResourceGroup --name myContainerGroup --container-name aci-tutorial-app
+#end

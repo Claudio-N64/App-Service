@@ -1,0 +1,28 @@
+az network vnet create \
+--resource-group myResourceGroup \
+--name myAKSVnet \
+--address-prefixes 192.168.0.0/16 \
+--subnet-name myAKSSubnet \
+--subnet-prefix 192.168.1.0/24
+
+#Retrieve the IDs for Vnet and subnet
+VNET_ID=$(az network vnet show --resource-group myResourceGroup --name myAKSVnet --query id -o tsv)
+SUBNET_ID=$(az network vnet subnet show --resource-group myResourceGroup --vnet-name myAKSVnet --name myAKSSubnet --query id -o tsv)
+appId=e20ee4a6-dc9d-4464-9067-91394c00d907
+pwd=J~jqqX.lM0HzvSyl._QqZR8yRb6JLgpJXM
+
+#Now assign the role to service principal
+az role assignment create --assignee e20ee4a6-dc9d-4464-9067-91394c00d907 --scope $VNET_ID --role "Network Contributor"
+# Now cluster deployment
+az aks create \
+--resource-group myResourceGroup \
+--name myAKSCluster \
+--node-count 3 \
+--network-plugin kubenet \
+--service-cidr 10.0.0.0/16 \
+--dns-service-ip 10.0.0.10 \
+--pod-cidr 10.244.0.0/16 \
+--docker-bridge-address 172.17.0.1/16 \
+--vnet-subnet-id $SUBNET_ID \
+--service-principal $appID \
+--client-secret $pwd

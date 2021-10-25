@@ -1,0 +1,1 @@
+az container logs --resource-group earn-deploy-aci-rg --name mycontainer-restart-demo
