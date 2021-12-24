@@ -1,0 +1,26 @@
+# Create the Resourcgroup
+ResourceGroup="AK8"
+Location="WestEurope"
+Clustername="myAKSCluster"
+echo $ResourceGroup
+echo Location
+echo Clustername
+
+az group create --name $ResourceGroup --location $Location
+
+# Create the cluster
+az aks create \
+--resource-group $ResourceGroup \
+--name myAKSCluster \
+--node-count 2 \
+--generate-ssh-keys \
+--attach-acr containeregistry
+
+# Install kubectl for CLI
+az aks install-cli
+
+# Retrieve the credentials
+az aks get-credentials --resource-group $ResourceGroup --name $Clustername
+
+# Verify the cluster connection
+kubectl get nodes
